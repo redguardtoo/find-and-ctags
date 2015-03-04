@@ -17,6 +17,10 @@
 
 ;;; Code:
 
+(defvar fctags-auto-update-tags-interval 600
+  "The interval to update TAGS. It's used by fctags-auto-update-tags and in seconds format.
+ Default value is 600 which equals 5 minutes.")
+
 (defvar fctags-gnu-find-executable nil
   "The path of GNU Find. If it's nil, it will be automatically detected.")
 
@@ -84,8 +88,8 @@
   "Ask ctags to create TAGS and return the full path of TAGS"
   ;; TODO save the CTAGS-OPTS into hash
   (let ((dir (file-name-as-directory (file-truename SRC-DIR)) )
-        (find-exe (if fctags-gnu-find-exe fctags-gnu-find-exe (fctags--guess-gnu-find)))
-        (ctags-exe (if fctags-ctags-exe fctags-find-exe (fctags--guess-ctags)))
+        (find-exe (if fctags-gnu-find-executable fctags-gnu-find-executable (fctags--guess-gnu-find)))
+        (ctags-exe (if fctags-ctags-executable fctags-ctags-executable (fctags--guess-ctags)))
         old-dir
         file
         cmd)
@@ -95,7 +99,7 @@
       ;; "cd dir && find . -name blah | ctags" will NOT work on windows cmd window
       (setq default-directory dir)
       ;; use relative directory because TAGS is shared between Cygwin and Window
-      (setq cmd (format "%s . -type f -not -name 'TAGS' %s | %s -e %s -L - &"
+      (setq cmd (format "%s . -type f -not -name 'TAGS' %s | %s -e %s -L -"
                         find-exe
                         FIND-OPTS
                         ctags-exe
@@ -116,31 +120,37 @@
 
 
 ;;;###autoload
-(defun fctags-update-all-tags-force ()
+(defun fctags-update-all-tags-force (&optional is-used-as-api)
   (interactive)
   "Check the tags in tags-table-list and re-create it"
   (let (opts)
     (dolist (tag tags-table-list)
-      (setq opts (get tag fctags-cli-opts-hash))
+      (setq opts (gethash tag fctags-cli-opts-hash))
       (if opts
           (apply 'fctags-run-ctags-if-needed (file-name-directory tag) opts)
-        (fctags-run-ctags-if-needed (file-name-directory tag) "" "" t)))
+        (fctags-run-ctags-if-needed (file-name-directory tag) "" "" t))
+      (unless is-used-as-api
+        (message "All TAGS have been updated!")))
     ))
 
 ;;;###autoload
 (defun fctags-auto-update-tags()
   (interactive)
   (cond
+
    ((not fctags-updated-timer)
     (setq fctags-updated-timer (current-time)))
-   ((< (- (float-time (current-time)) (float-time fctags-updated-timer)) 1800)
-    ;; < 300 seconds
+
+   ((< (- (float-time (current-time)) (float-time fctags-updated-timer))
+       fctags-auto-update-tags-interval)
     ;; do nothing
     )
+
    (t
     (setq fctags-updated-timer (current-time))
-    (fctags-update-all-tags-force)
-    (message "Updated TAGS after %d seconds." (- (float-time (current-time))  (float-time fctags-updated-timer))))
+    (fctags-update-all-tags-force t)
+    (message "All TAGS have been updated after %d seconds!"
+             (- (float-time (current-time)) (float-time fctags-updated-timer))))
    ))
 
 (provide 'find-and-ctags)
