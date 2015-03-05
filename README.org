@@ -1,6 +1,78 @@
 * find-and-ctags (v0.0.1)
+Create and update TAGS by combining [[http://www.gnu.org/software/findutils/][Find]] and [[http://ctags.sourceforge.net/ctags][Ctags]] for any language on Winows/Linux/OSX.
+
+* Why
+- Enough tools provided. You can set up any project in 1 minute
+- The TAGS file created is *portable*. You can use it anywhere
+- Easy to manage. All your projects settings is in your ".emacs"
+- Powerful and versatile. Power of Find/Ctags/Lisp is at your hand
 * Install
+Place find-and-ctags.el somewhere (say ~/.emacs/lisp), add below code into ".emacs":
+
+#+begin_src elisp
+(add-to-list 'load-path "~/.emacs.d/lisp/")
+(require 'find-and-ctags)
+#+end_src
+
 * Usage
+Here is sample setup for project named "MYPROJ":
+#+begin_src elisp
+(def my-setup-develop-environment ()
+     (interactive)
+     (let (proj-dir
+           FIND-OPTS
+           CTAGS-OPTS)
+
+       ;; for COOL MYPROJ
+       (when (fctags-current-path-match-pattern-p "MYPROJ.*/app")
+         (setq proj-dir (if fctags-windows-p "c:/Workspaces/MYPROJ/MACWeb/WebContent/app"
+                     "~/projs/MYPROJ/MACWeb/WebContent/app"))
+         (setq FIND-OPTS "-not -size +64k")
+         (setq CTAGS-OPTS "--exclude=*.min.js --exclude=*.git*")
+         (set tags-table-list
+              (list (fctags-run-ctags-if-needed proj-dir FIND-OPTS CTAGS-OPTS))))
+
+       ;; for other projects
+       ;; insert NEW when statements here
+       ))
+
+;; OPTIONAL
+(add-hook 'after-save-hook 'fctags-auto-update-tags)
+(add-hook 'java-mode-hook 'my-setup-develop-environment)
+(add-hook 'emacs-lisp-mode-hook 'my-setup-develop-environment)
+(add-hook 'org-mode-hook 'my-setup-develop-environment)
+(add-hook 'js2-mode-hook 'my-setup-develop-environment)
+(add-hook 'js-mode-hook 'my-setup-develop-environment)
+(add-hook 'javascript-mode-hook 'my-setup-develop-environment)
+(add-hook 'web-mode-hook 'my-setup-develop-environment)
+(add-hook 'c++-mode-hook 'my-setup-develop-environment)
+(add-hook 'c-mode-hook 'my-setup-develop-environment)
+#+end_src
+
+"tags-table-list" is the global variable defined in Emacs. find-and-ctags will set up it for you.
+
+After the "tags-table-list" is set, you can `M-x find-tag` to do code navigation. "find-tags" is the command bundled with Emacs.
+* Advanced Tips (OPTIONAL)
+** Filter files feeded into Ctags
+"fctags-run-ctags-if-needed" actually only execute the below command line in shell:
+#+begin_src bash
+find . -type f -not -name 'TAGS' FIND-OPTS | ctags -e CTAGS-OPTS -L -
+#+end_src
+
+So you can insert extra command chain into FIND-OPTS.
+
+For example, if you assign FIND-OPTS to " | grep 'test.*'", the actual command to execute will be:
+#+begin_src bash
+find . -type f -not -name 'TAGS' | grep 'test.*' | ctags -e CTAGS-OPTS -L -
+#+end_src
+** Detect hostname of current computer
+Use API "(fctags-get-hostname)"
+** Time interval to update TAGS
+It's defined in the global variable "fctags-auto-update-tags-interval". The unit of time is the second. 
+** Ctags setup
+Google "filetype:ctags site:github.com". Here is [[https://gist.github.com/redguardtoo/b12ddae3b8010a276e9b#file-ctags][mine]].
+
+You may need configure environment variable "HOME" on Windows because ctags looks for "%HOME%/.ctags" by default.
 * Bug Report
 Check [[https://github.com/redguardtoo/find-and-ctags]].
 

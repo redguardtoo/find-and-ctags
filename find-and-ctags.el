@@ -1,4 +1,4 @@
-;;; find-and-ctags.el --- use `find' and `ctags' for code navigation
+;;; find-and-ctags.el --- Create and update TAGS by combining Find and Ctags for any language on Winows/Linux/OSX
 
 ;; Copyright (C) 2014 Chen Bin
 
@@ -11,9 +11,38 @@
 
 ;; This file is free software (GPLv3 License)
 
-;; Set up:
+;; Usage:
 ;;
-;; https://github.com/redguardtoo/find-and-ctags/blob/master/README.org for use cases
+;; (def my-setup-develop-environment ()
+;;      (interactive)
+;;      (let (proj-dir
+;;            FIND-OPTS
+;;            CTAGS-OPTS)
+
+;;        ;; for COOL MYPROJ
+;;        (when (fctags-current-path-match-pattern-p "MYPROJ.*/app")
+;;          (setq proj-dir (if fctags-windows-p "c:/Workspaces/MYPROJ/MACWeb/WebContent/app"
+;;                      "~/projs/MYPROJ/MACWeb/WebContent/app"))
+;;          (setq FIND-OPTS "-not -size +64k")
+;;          (setq CTAGS-OPTS "--exclude=*.min.js --exclude=*.git*")
+;;          (set tags-table-list
+;;               (list (fctags-run-ctags-if-needed proj-dir FIND-OPTS CTAGS-OPTS))))
+;;        ;; for other projects
+;;        ;; insert more WHENs here
+;;        ))
+;; ;; OPTIONAL
+;; (add-hook 'after-save-hook 'fctags-auto-update-tags)
+;; (add-hook 'java-mode-hook 'my-setup-develop-environment)
+;; (add-hook 'emacs-lisp-mode-hook 'my-setup-develop-environment)
+;; (add-hook 'org-mode-hook 'my-setup-develop-environment)
+;; (add-hook 'js2-mode-hook 'my-setup-develop-environment)
+;; (add-hook 'js-mode-hook 'my-setup-develop-environment)
+;; (add-hook 'javascript-mode-hook 'my-setup-develop-environment)
+;; (add-hook 'web-mode-hook 'my-setup-develop-environment)
+;; (add-hook 'c++-mode-hook 'my-setup-develop-environment)
+;; (add-hook 'c-mode-hook 'my-setup-develop-environment)
+;;
+;; https://github.com/redguardtoo/find-and-ctags/blob/master/README.org for more tips
 
 ;;; Code:
 
