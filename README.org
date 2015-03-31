@@ -1,4 +1,4 @@
-* find-and-ctags (v0.0.1)
+* find-and-ctags (v0.0.2)
 Create and update TAGS by combining [[http://www.gnu.org/software/findutils/][Find]] and [[http://ctags.sourceforge.net/ctags][Ctags]] for any language on Winows/Linux/OSX.
 
 * Why
@@ -24,12 +24,14 @@ Here is sample setup for project named "MYPROJ":
            CTAGS-OPTS)
 
        ;; for COOL MYPROJ
+       ;; you can use fctags-current-full-filename-match-pattern-p instead
        (when (fctags-current-path-match-pattern-p "MYPROJ.*/app")
          (setq proj-dir (if fctags-windows-p "c:/Workspaces/MYPROJ/MACWeb/WebContent/app"
                      "~/projs/MYPROJ/MACWeb/WebContent/app"))
          (setq FIND-OPTS "-not -size +64k")
          (setq CTAGS-OPTS "--exclude=*.min.js --exclude=*.git*")
-         (set tags-table-list
+         ;; or use setq-local instead
+         (setq tags-table-list
               (list (fctags-run-ctags-if-needed proj-dir FIND-OPTS CTAGS-OPTS))))
 
        ;; for other projects
