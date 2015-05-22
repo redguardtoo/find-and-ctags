@@ -24,7 +24,7 @@
 ;;        (when (fctags-current-path-match-pattern-p "MYPROJ.*/app")
 ;;          (setq proj-dir (if fctags-windows-p "c:/Workspaces/MYPROJ/MACWeb/WebContent/app"
 ;;                      "~/projs/MYPROJ/MACWeb/WebContent/app"))
-;;          (setq FIND-OPTS "-not -size +64k")
+;;          (setq FIND-OPTS "-not -size +64k -not -iwholename '*/dist/*'")
 ;;          (setq CTAGS-OPTS "--exclude=*.min.js --exclude=*.git*")
 ;;          ;; you can use setq-local instead
 ;;          (setq tags-table-list
