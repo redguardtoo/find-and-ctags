@@ -1,4 +1,4 @@
-* find-and-ctags (v0.0.2)
+* find-and-ctags (v0.0.3)
 Create and update TAGS by combining [[http://www.gnu.org/software/findutils/][Find]] and [[http://ctags.sourceforge.net/ctags][Ctags]] for any language on Winows/Linux/OSX.
 
 * Why
@@ -28,6 +28,7 @@ Here is sample setup for project named "MYPROJ":
        (when (fctags-current-path-match-pattern-p "MYPROJ.*/app")
          (setq proj-dir (if fctags-windows-p "c:/Workspaces/MYPROJ/MACWeb/WebContent/app"
                      "~/projs/MYPROJ/MACWeb/WebContent/app"))
+         ;; ignore file bigger than 64K, ignore files in "dist/"
          (setq FIND-OPTS "-not -size +64k  -not -iwholename '*/dist/*'")
          (setq CTAGS-OPTS "--exclude=*.min.js --exclude=*.git*")
          ;; or use setq-local instead
@@ -53,7 +54,7 @@ Here is sample setup for project named "MYPROJ":
 
 "tags-table-list" is the global variable defined in Emacs. find-and-ctags will set up it for you.
 
-After the "tags-table-list" is set, you can `M-x find-tag` to do code navigation. "find-tags" is the command bundled with Emacs.
+After the "tags-table-list" is set, you can `M-x find-tag` to do code navigation. "find-tag" is the command bundled with Emacs.
 * Advanced Tips (OPTIONAL)
 ** Filter files feeded into Ctags
 "fctags-run-ctags-if-needed" actually only execute the below command line in shell:
@@ -72,7 +73,7 @@ Use API "(fctags-get-hostname)"
 ** Time interval to update TAGS
 It's defined in the global variable "fctags-auto-update-tags-interval". The unit of time is the second. 
 ** Ctags setup
-Google "filetype:ctags site:github.com". Here is [[https://gist.github.com/redguardtoo/b12ddae3b8010a276e9b#file-ctags][mine]].
+Google "filetype:ctags site:github.com". Here is [[https://gist.github.com/redguardtoo/b12ddae3b80.0.376e9b#file-ctags][mine]].
 
 You may need configure environment variable "HOME" on Windows because ctags looks for "%HOME%/.ctags" by default.
 * Bug Report
