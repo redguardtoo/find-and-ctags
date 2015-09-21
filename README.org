@@ -1,6 +1,10 @@
 * find-and-ctags (v0.0.3)
-Create and update TAGS by combining [[http://www.gnu.org/software/findutils/][Find]] and [[http://ctags.sourceforge.net/ctags][Ctags]] for any language on Winows/Linux/OSX.
 
+[[http://melpa.org/#/find-and-ctags][file:http://melpa.org/packages/find-and-ctags-badge.svg]]
+
+[[http://stable.melpa.org/#/find-and-ctags][file:http://stable.melpa.org/packages/find-and-ctags-badge.svg]]
+
+Create and update TAGS by combining [[http://www.gnu.org/software/findutils/][Find]] and [[http://ctags.sourceforge.net/ctags][Ctags]] for any language on Winows/Linux/OSX.
 * Why
 - Enough tools provided. You can set up any project in 1 minute
 - The TAGS file created is *portable*. You can use it anywhere
