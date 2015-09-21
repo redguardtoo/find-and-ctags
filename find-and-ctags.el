@@ -1,4 +1,4 @@
-;;; find-and-ctags.el --- Create and update TAGS by combining Find and Ctags for any language on Winows/Linux/OSX
+;;; find-and-ctags.el --- Use ctags&find to create TAGS on Winows/Linux/OSX
 
 ;; Copyright (C) 2014 Chen Bin
 
@@ -45,6 +45,10 @@
 ;;     (add-hook 'web-mode-hook 'my-setup-develop-environment)
 ;;     (add-hook 'c++-mode-hook 'my-setup-develop-environment)
 ;;     (add-hook 'c-mode-hook 'my-setup-develop-environment)
+;;
+;; In above setup, TAGS will be updated *automatically* every 5 minutes.
+;; But you can manually update TAGS by `M-x fctags-update-all-tags-force`.
+;; If you want to manually update the TAGS, `M-x fctags-update-all-tags-force`.
 ;;
 ;; You can `M-x find-tag` to start code navigation
 ;;
@@ -196,5 +200,4 @@
    ))
 
 (provide 'find-and-ctags)
-
 ;;; find-and-ctags.el ends here

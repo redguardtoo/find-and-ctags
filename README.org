@@ -1,10 +1,8 @@
 * find-and-ctags (v0.0.3)
 
-[[http://melpa.org/#/find-and-ctags][file:http://melpa.org/packages/find-and-ctags-badge.svg]]
+[[http://melpa.org/#/find-and-ctags][file:http://melpa.org/packages/find-and-ctags-badge.svg]] [[http://stable.melpa.org/#/find-and-ctags][file:http://stable.melpa.org/packages/find-and-ctags-badge.svg]]
 
-[[http://stable.melpa.org/#/find-and-ctags][file:http://stable.melpa.org/packages/find-and-ctags-badge.svg]]
-
-Create and update TAGS by combining [[http://www.gnu.org/software/findutils/][Find]] and [[http://ctags.sourceforge.net/ctags][Ctags]] for any language on Winows/Linux/OSX.
+Create TAGS by combining [[http://www.gnu.org/software/findutils/][Find]] and [[http://ctags.sourceforge.net/ctags][Ctags]] on Winows/Linux/OSX.
 * Why
 - Enough tools provided. You can set up any project in 1 minute
 - The TAGS file created is *portable*. You can use it anywhere
@@ -59,6 +57,8 @@ Here is sample setup for project named "MYPROJ":
 "tags-table-list" is the global variable defined in Emacs. find-and-ctags will set up it for you.
 
 After the "tags-table-list" is set, you can `M-x find-tag` to do code navigation. "find-tag" is the command bundled with Emacs.
+
+In above setup, TAGS will be updated *automatically* every 5 minutes. But you can alway manually update the TAGS by `M-x fctags-update-all-tags-force`.
 * Advanced Tips (OPTIONAL)
 ** Filter files feeded into Ctags
 "fctags-run-ctags-if-needed" actually only execute the below command line in shell:
