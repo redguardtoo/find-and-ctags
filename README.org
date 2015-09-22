@@ -1,8 +1,8 @@
-* find-and-ctags (v0.0.3)
+* find-and-ctags (v0.0.4)
 
 [[http://melpa.org/#/find-and-ctags][file:http://melpa.org/packages/find-and-ctags-badge.svg]] [[http://stable.melpa.org/#/find-and-ctags][file:http://stable.melpa.org/packages/find-and-ctags-badge.svg]]
 
-Create TAGS by combining [[http://www.gnu.org/software/findutils/][Find]] and [[http://ctags.sourceforge.net/ctags][Ctags]] on Winows/Linux/OSX.
+Create TAGS by combining [[http://www.gnu.org/software/findutils/][Find]] and [[http://ctags.sourceforge.net/ctags][Ctags]] on Windows/Linux/OSX.
 * Why
 - Enough tools provided. You can set up any project in 1 minute
 - The TAGS file created is *portable*. You can use it anywhere
@@ -26,23 +26,23 @@ Here is sample setup for project named "MYPROJ":
            CTAGS-OPTS)
 
        ;; for COOL MYPROJ
-       ;; you can use fctags-current-full-filename-match-pattern-p instead
-       (when (fctags-current-path-match-pattern-p "MYPROJ.*/app")
-         (setq proj-dir (if fctags-windows-p "c:/Workspaces/MYPROJ/MACWeb/WebContent/app"
+       ;; you can use find-and-ctags-current-full-filename-match-pattern-p instead
+       (when (find-and-ctags-current-path-match-pattern-p "MYPROJ.*/app")
+         (setq proj-dir (if find-and-ctags-windows-p "c:/Workspaces/MYPROJ/MACWeb/WebContent/app"
                      "~/projs/MYPROJ/MACWeb/WebContent/app"))
          ;; ignore file bigger than 64K, ignore files in "dist/"
          (setq FIND-OPTS "-not -size +64k  -not -iwholename '*/dist/*'")
          (setq CTAGS-OPTS "--exclude=*.min.js --exclude=*.git*")
          ;; or use setq-local instead
          (setq tags-table-list
-              (list (fctags-run-ctags-if-needed proj-dir FIND-OPTS CTAGS-OPTS))))
+              (list (find-and-ctags-run-ctags-if-needed proj-dir FIND-OPTS CTAGS-OPTS))))
 
        ;; for other projects
        ;; insert NEW when statements here
        ))
 
 ;; OPTIONAL
-(add-hook 'after-save-hook 'fctags-auto-update-tags)
+(add-hook 'after-save-hook 'find-and-ctags-auto-update-tags)
 (add-hook 'java-mode-hook 'my-setup-develop-environment)
 (add-hook 'emacs-lisp-mode-hook 'my-setup-develop-environment)
 (add-hook 'org-mode-hook 'my-setup-develop-environment)
@@ -58,10 +58,10 @@ Here is sample setup for project named "MYPROJ":
 
 After the "tags-table-list" is set, you can `M-x find-tag` to do code navigation. "find-tag" is the command bundled with Emacs.
 
-In above setup, TAGS will be updated *automatically* every 5 minutes. But you can alway manually update the TAGS by `M-x fctags-update-all-tags-force`.
+In above setup, TAGS will be updated *automatically* every 5 minutes. But you can alway manually update the TAGS by `M-x find-and-ctags-update-all-tags-force`.
 * Advanced Tips (OPTIONAL)
 ** Filter files feeded into Ctags
-"fctags-run-ctags-if-needed" actually only execute the below command line in shell:
+"find-and-ctags-run-ctags-if-needed" actually only execute the below command line in shell:
 #+begin_src bash
 find . -type f -not -name 'TAGS' FIND-OPTS | ctags -e CTAGS-OPTS -L -
 #+end_src
@@ -73,11 +73,18 @@ For example, if you assign FIND-OPTS to " | grep 'test.*'", the actual command t
 find . -type f -not -name 'TAGS' | grep 'test.*' | ctags -e CTAGS-OPTS -L -
 #+end_src
 ** Detect hostname of current computer
-Use API "(fctags-get-hostname)"
+Use API "(find-and-ctags-get-hostname)"
+
+#+begin_src elisp
+;; I do Javascript/HTML/Java in office and C++ at home.
+;; My home PC hostname is like `AU0247589'
+(if (string-match "^HOMEPC.*" (find-and-ctags-get-hostname))
+  (setq my-default-ctags-options "--I IMPLEMENT_ABSTRACT_CLASS"))
+#+end_src
 ** Time interval to update TAGS
-It's defined in the global variable "fctags-auto-update-tags-interval". The unit of time is the second. 
+It's defined in the global variable "find-and-ctags-auto-update-tags-interval". The unit of time is the second.
 ** Ctags setup
-Google "filetype:ctags site:github.com". Here is [[https://gist.github.com/redguardtoo/b12ddae3b80.0.376e9b#file-ctags][mine]].
+Google "filetype:ctags site:github.com". Here is [[https://gist.github.com/redguardtoo/b12ddae3b80.0.476e9b#file-ctags][mine]].
 
 You may need configure environment variable "HOME" on Windows because ctags looks for "%HOME%/.ctags" by default.
 * Bug Report
