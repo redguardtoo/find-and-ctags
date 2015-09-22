@@ -70,10 +70,10 @@
   "The options to update TAGS. The path of TAGS is key. Command line options is value.")
 
 ;; Is Microsoft Windows?
-(setq fctags-windows-p (eq system-type 'windows-nt))
+(defconst fctags-windows-p (eq system-type 'windows-nt))
 
 ;; Timer to run auto-update TAGS.
-(setq fctags-updated-timer nil)
+(defvar fctags-updated-timer nil)
 
 (defun fctags--guess-gnu-find ()
   (let ((rlt "find"))
