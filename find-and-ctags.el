@@ -14,41 +14,34 @@
 ;;; Commentary:
 
 ;; Insert below setup into ~/.emacs.d/init.el:
-;;     (def my-setup-develop-environment ()
-;;          (interactive)
-;;          (let (proj-dir
-;;                FIND-OPTS
-;;                CTAGS-OPTS)
+;;   (def my-setup-develop-environment ()
+;;        (interactive)
+;;        (let (proj-dir
+;;              find-opts
+;;              ctags-opts)
 
-;;            ;; for COOL MYPROJ
-;;            ;; you can use find-and-ctags-current-full-filename-match-pattern-p instead
-;;            (when (find-and-ctags-current-path-match-pattern-p "MYPROJ.*/app")
-;;              (setq proj-dir (if find-and-ctags-windows-p "c:/Workspaces/MYPROJ/MACWeb/WebContent/app"
-;;                          "~/projs/MYPROJ/MACWeb/WebContent/app"))
-;;              ;; ignore file bigger than 64K, ignore files in "dist/"
-;;              (setq FIND-OPTS "-not -size +64k -not -iwholename '*/dist/*'")
-;;              (setq CTAGS-OPTS "--exclude=*.min.js --exclude=*.git*")
-;;              ;; you can use setq-local instead
-;;              (setq tags-table-list
-;;                   (list (find-and-ctags-run-ctags-if-needed proj-dir FIND-OPTS CTAGS-OPTS))))
-;;            ;; for other projects
-;;            ;; insert more WHEN statements here
-;;            ))
-;;     ;; OPTIONAL
-;;     (add-hook 'after-save-hook 'find-and-ctags-auto-update-tags)
-;;     (add-hook 'java-mode-hook 'my-setup-develop-environment)
-;;     (add-hook 'emacs-lisp-mode-hook 'my-setup-develop-environment)
-;;     (add-hook 'org-mode-hook 'my-setup-develop-environment)
-;;     (add-hook 'js2-mode-hook 'my-setup-develop-environment)
-;;     (add-hook 'js-mode-hook 'my-setup-develop-environment)
-;;     (add-hook 'javascript-mode-hook 'my-setup-develop-environment)
-;;     (add-hook 'web-mode-hook 'my-setup-develop-environment)
-;;     (add-hook 'c++-mode-hook 'my-setup-develop-environment)
-;;     (add-hook 'c-mode-hook 'my-setup-develop-environment)
+;;          ;; for COOL MYPROJ
+;;          ;; you can use find-and-ctags-current-full-filename-match-pattern-p instead
+;;          (when (find-and-ctags-current-path-match-pattern-p "MYPROJ.*/app")
+;;            (setq proj-dir (if find-and-ctags-windows-p "c:/Workspaces/MYPROJ/MACWeb/WebContent/app"
+;;                        "~/projs/MYPROJ/MACWeb/WebContent/app"))
+;;            ;; ignore file bigger than 64K, ignore files in "dist/"
+;;            (setq find-opts "-not -size +64k -not -iwholename '*/dist/*'")
+;;            (setq ctags-opts "--exclude='*.min.js' --exclude='*.git*'")
+;;            ;; you can use setq-local instead
+;;            (setq tags-table-list
+;;                 (list (find-and-ctags-run-ctags-if-needed proj-dir find-opts ctags-opts))))
+;;          ;; for other projects
+;;          ;; insert more WHEN statements here
+;;          ))
+;;   ;; OPTIONAL
+;;   (add-hook 'after-save-hook 'find-and-ctags-auto-update-tags)
+;;   (add-hook 'prog-mode-hook 'my-setup-develop-environment)
+;;   (add-hook 'org-mode-hook 'my-setup-develop-environment)
 ;;
 ;; In above setup, TAGS will be updated *automatically* every 5 minutes.
-;; But you can manually update TAGS by `M-x find-and-ctags-update-all-tags-force`.
-;; If you want to manually update the TAGS, `M-x find-and-ctags-update-all-tags-force`.
+;; But you can manually update TAGS by `M-x find-and-ctags-update-all-tags-force'.
+;; If you want to manually update the TAGS, `M-x find-and-ctags-update-all-tags-force'.
 ;;
 ;; After `'tags-table-list' is set, You can `M-x find-tag' to start code navigation
 ;;
@@ -110,7 +103,7 @@ Command line options is value.")
   "Reliable way to get current hostname.
 `(getenv \"HOSTNAME\")' won't work because $HOSTNAME is NOT an
  environment variable.
-`(system-name)' won't work because /etc/hosts could be modified"
+`system-name' won't work because /etc/hosts could be modified"
   (with-temp-buffer
     (shell-command "hostname" t)
     (goto-char (point-max))
@@ -118,14 +111,14 @@ Command line options is value.")
     (buffer-string)))
 
 ;;;###autoload
-(defun find-and-ctags-run-ctags-if-needed (SRC-DIR FIND-OPTS CTAGS-OPTS &optional FORCE)
+(defun find-and-ctags-run-ctags-if-needed (src-dir find-opts ctags-opts &optional force)
   "Ask ctags to create TAGS and return the full path of TAGS.
 SRC-DIR is the `default-directory' to run the command.
 FIND-OPTS is the command line options pass to `find'.
 CTAGS-OPTS is the command line options pass `ctags'.
 If FORCE is t, the commmand is executed without consulting the timer."
-  ;; TODO save the CTAGS-OPTS into hash
-  (let ((dir (file-name-as-directory (file-truename SRC-DIR)) )
+  ;; TODO save the ctags-opts into hash
+  (let ((dir (file-name-as-directory (file-truename src-dir)) )
         (find-exe (or find-and-ctags-gnu-find-executable
                       (find-and-ctags--guess-executable "find")))
         (ctags-exe (or find-and-ctags-ctags-executable
@@ -134,34 +127,34 @@ If FORCE is t, the commmand is executed without consulting the timer."
         cmd)
     (setq file (concat dir "TAGS"))
     ;; always update cli options
-    (puthash file (list FIND-OPTS CTAGS-OPTS t) find-and-ctags-cli-opts-hash)
-    (when (or FORCE (not (file-exists-p file)))
+    (puthash file (list find-opts ctags-opts t) find-and-ctags-cli-opts-hash)
+    (when (or force (not (file-exists-p file)))
       (let ((default-directory dir))
         ;; "cd dir && find . -name blah | ctags" will NOT work on windows cmd window
         ;; use relative directory because TAGS is shared between Cygwin and Window
         ;; restore default-directory
         (setq cmd (format "%s . -type f -not -name 'TAGS' %s | %s -e %s -L -"
                           find-exe
-                          (find-and-ctags--escape-options FIND-OPTS)
+                          (find-and-ctags--escape-options find-opts)
                           ctags-exe
-                          (find-and-ctags--escape-options CTAGS-OPTS)))
-        (message "find-and-ctags runs command: %s" cmd)
+                          (find-and-ctags--escape-options ctags-opts)))
+        (message "find-and-ctags runs: %s" cmd)
         (shell-command cmd)))
     file))
 
 ;;;###autoload
-(defun find-and-ctags-current-path-match-pattern-p (REGEX)
+(defun find-and-ctags-current-path-match-pattern-p (regex)
   "Is current directory match the REGEX?"
   (let ((dir (if (buffer-file-name)
                  (file-name-directory (buffer-file-name))
                "")))
-    (string-match-p REGEX dir)))
+    (string-match-p regex dir)))
 
 ;;;###autoload
-(defun find-and-ctags-current-full-filename-match-pattern-p (REGEX)
+(defun find-and-ctags-current-full-filename-match-pattern-p (regex)
   "Is current full file name (including directory) match the REGEX?"
   (let ((dir (if (buffer-file-name) (buffer-file-name) "")))
-    (string-match-p REGEX dir)))
+    (string-match-p regex dir)))
 
 ;;;###autoload
 (defun find-and-ctags-update-all-tags-force (&optional is-used-as-api)
@@ -182,7 +175,6 @@ If IS-USED-AS-API is true, friendly message is suppressed"
 (defun find-and-ctags-auto-update-tags()
   (interactive)
   (cond
-
    ((not find-and-ctags-updated-timer)
     (setq find-and-ctags-updated-timer (current-time)))
 

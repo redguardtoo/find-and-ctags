@@ -43,15 +43,8 @@ Here is sample setup for project named "MYPROJ":
 
 ;; OPTIONAL
 (add-hook 'after-save-hook 'find-and-ctags-auto-update-tags)
-(add-hook 'java-mode-hook 'my-setup-develop-environment)
-(add-hook 'emacs-lisp-mode-hook 'my-setup-develop-environment)
+(add-hook 'prog-mode-hook 'my-setup-develop-environment) ; prog-mode require emacs24+
 (add-hook 'org-mode-hook 'my-setup-develop-environment)
-(add-hook 'js2-mode-hook 'my-setup-develop-environment)
-(add-hook 'js-mode-hook 'my-setup-develop-environment)
-(add-hook 'javascript-mode-hook 'my-setup-develop-environment)
-(add-hook 'web-mode-hook 'my-setup-develop-environment)
-(add-hook 'c++-mode-hook 'my-setup-develop-environment)
-(add-hook 'c-mode-hook 'my-setup-develop-environment)
 #+end_src
 
 "tags-table-list" is the global variable defined in Emacs. find-and-ctags will set up it for you.
