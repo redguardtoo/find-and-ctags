@@ -1,6 +1,4 @@
-* find-and-ctags (v0.0.4)
-
-[[http://melpa.org/#/find-and-ctags][file:http://melpa.org/packages/find-and-ctags-badge.svg]] [[http://stable.melpa.org/#/find-and-ctags][file:http://stable.melpa.org/packages/find-and-ctags-badge.svg]]
+* find-and-ctags (v0.0.5)
 
 Create TAGS by combining [[http://www.gnu.org/software/findutils/][Find]] and [[http://ctags.sourceforge.net/ctags][Ctags]] on Windows/Linux/OSX.
 * Why
@@ -19,27 +17,28 @@ Place find-and-ctags.el somewhere (say ~/.emacs/lisp), add below code into ".ema
 * Usage
 Here is sample setup for project named "MYPROJ":
 #+begin_src elisp
-(def my-setup-develop-environment ()
-     (interactive)
-     (let (proj-dir
-           FIND-OPTS
-           CTAGS-OPTS)
+(defun my-setup-develop-environment ()
+  (interactive)
+  (let (proj-dir
+        find-opts
+        ctags-opts)
 
-       ;; for COOL MYPROJ
-       ;; you can use find-and-ctags-current-full-filename-match-pattern-p instead
-       (when (find-and-ctags-current-path-match-pattern-p "MYPROJ.*/app")
-         (setq proj-dir (if find-and-ctags-windows-p "c:/Workspaces/MYPROJ/MACWeb/WebContent/app"
-                     "~/projs/MYPROJ/MACWeb/WebContent/app"))
-         ;; ignore file bigger than 64K, ignore files in "dist/"
-         (setq FIND-OPTS "-not -size +64k  -not -iwholename '*/dist/*'")
-         (setq CTAGS-OPTS "--exclude=*.min.js --exclude=*.git*")
-         ;; or use setq-local instead
-         (setq tags-table-list
-              (list (find-and-ctags-run-ctags-if-needed proj-dir FIND-OPTS CTAGS-OPTS))))
+    ;; for COOL MYPROJ
+    ;; you can use find-and-ctags-current-full-filename-match-pattern-p instead
+    (when (find-and-ctags-current-path-match-pattern-p "MYPROJ.*/app")
+      (setq proj-dir (if find-and-ctags-windows-p "c:/Workspaces/MYPROJ/MACWeb/WebContent/app"
+                       "~/projs/MYPROJ/MACWeb/WebContent/app"))
+      ;; ignore file bigger than 64K, ignore files in "dist/"
+      (setq find-opts "-not -size +64k  -not -iwholename '*/dist/*'")
+      (setq ctags-opts "--exclude=*.min.js --exclude=*.git*")
+      ;; or use setq-local instead
+      (setq tags-table-list
+            (list (find-and-ctags-run-ctags-if-needed proj-dir '((find-opts ctags-opts)
+                                                                 ("dist/test.js" "-a"))))))
 
-       ;; for other projects
-       ;; insert NEW when statements here
-       ))
+    ;; for other projects
+    ;; insert NEW `when' statements here
+    ))
 
 ;; OPTIONAL
 (add-hook 'after-save-hook 'find-and-ctags-auto-update-tags)
@@ -56,14 +55,14 @@ In above setup, TAGS will be updated *automatically* every 5 minutes. But you ca
 ** Filter files feeded into Ctags
 "find-and-ctags-run-ctags-if-needed" actually only execute the below command line in shell:
 #+begin_src bash
-find . -type f -not -name 'TAGS' FIND-OPTS | ctags -e CTAGS-OPTS -L -
+find . -type f -not -name 'TAGS' find-opts | ctags -e ctags-opts -L -
 #+end_src
 
-So you can insert extra command chain into FIND-OPTS.
+So you can insert extra command chain into find-opts.
 
-For example, if you assign FIND-OPTS to " | grep 'test.*'", the actual command to execute will be:
+For example, if you assign find-opts to " | grep 'test.*'", the actual command to execute will be:
 #+begin_src bash
-find . -type f -not -name 'TAGS' | grep 'test.*' | ctags -e CTAGS-OPTS -L -
+find . -type f -not -name 'TAGS' | grep 'test.*' | ctags -e ctags-opts -L -
 #+end_src
 ** Detect hostname of current computer
 Use API "(find-and-ctags-get-hostname)"
