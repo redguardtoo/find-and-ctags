@@ -1,4 +1,4 @@
-* find-and-ctags (v0.0.5)
+* find-and-ctags (v0.0.6)
 
 Create TAGS by combining [[http://www.gnu.org/software/findutils/][Find]] and [[http://ctags.sourceforge.net/ctags][Ctags]] on Windows/Linux/OSX.
 * Why
