@@ -28,8 +28,7 @@
 ;;       ;; ignore file bigger than 64K, ignore files in "dist/"
 ;;       (setq find-opts "-not -size +64k -not -iwholename '*/dist/*'")
 ;;       (setq ctags-opts "--exclude='*.min.js' --exclude='*.git*'")
-;;       ;; you can use setq-local instead
-;;       (setq tags-table-list
+;;       (setq-local tags-table-list
 ;;             (list (find-and-ctags-run-ctags-if-needed proj-dir '((find-opts ctags-opts)
 ;;                                                                  ("dist/test.js" "-a"))))))
 ;;     ;; for other projects
