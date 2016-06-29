@@ -1,11 +1,11 @@
 ;;; find-and-ctags.el --- Use ctags&find to create TAGS on Winows/Linux/OSX
 
-;; Copyright (C) 2014 Chen Bin
+;; Copyright (C) 2014-2016 Chen Bin
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/find-and-ctags
 ;; Keywords: find ctags
-;; Version: 0.0.6
+;; Version: 0.0.7
 
 ;; This file is not part of GNU Emacs.
 
@@ -16,38 +16,32 @@
 ;; Insert below setup into ~/.emacs.d/init.el:
 ;; (defun my-setup-develop-environment ()
 ;;   (interactive)
-;;   (let (proj-dir
-;;         find-opts
-;;         ctags-opts)
 
-;;     ;; for COOL MYPROJ
-;;     ;; you can use find-and-ctags-current-full-filename-match-pattern-p instead
-;;     (when (find-and-ctags-current-path-match-pattern-p "MYPROJ.*/app")
-;;       (setq proj-dir (if find-and-ctags-windows-p "c:/Workspaces/MYPROJ/MACWeb/WebContent/app"
-;;                        "~/projs/MYPROJ/MACWeb/WebContent/app"))
-;;       ;; ignore file bigger than 64K, ignore files in "dist/"
-;;       (setq find-opts "-not -size +64k -not -iwholename '*/dist/*'")
-;;       (setq ctags-opts "--exclude='*.min.js' --exclude='*.git*'")
-;;       (setq-local tags-table-list
-;;             (list (find-and-ctags-run-ctags-if-needed proj-dir '((find-opts ctags-opts)
-;;                                                                  ("dist/test.js" "-a"))))))
-;;     ;; for other projects
-;;     ;; insert more `when' statements here
-;;     ))
-;;
-;;   ;; OPTIONAL
-;;   (add-hook 'after-save-hook 'find-and-ctags-auto-update-tags)
-;;   (add-hook 'prog-mode-hook 'my-setup-develop-environment)
-;;   (add-hook 'org-mode-hook 'my-setup-develop-environment)
+;;   ;; you can use `find-and-ctags-current-full-filename-match-pattern-p' instead
+;;   (when (find-and-ctags-current-path-match-pattern-p "/MYPROJ")
+;;     (setq-local tags-table-list
+;;                 (list (find-and-ctags-run-ctags-if-needed "~/workspace/MYPROJ" ; project directory
+;;                                                           '(("-not -size +64k" "--exclude=*.min.js") ; (find-opts ctags-opts)
+;;                                                             ;; you may add more find-opts ctags-opts pair HERE to run find&ctags again to APPEND to same TAGS file
+;;                                                             ;; ctags-opts must contain "-a" to append
+;;                                                             ;; (find-opts "-a")
+;;                                                             )))))
+;;   ;; for other projects
+;;   ;; insert NEW `when' statements here
+;;   )
+;; (add-hook 'prog-mode-hook 'my-setup-develop-environment) ; prog-mode require emacs24+
+;; (add-hook 'lua-mode-hook 'my-setup-develop-environment) ; lua-mode does NOT inherit from prog-mode
+;; ;; OPTIONAL
+;; (add-hook 'after-save-hook 'find-and-ctags-auto-update-tags)
 ;;
 ;; In above setup, TAGS will be updated *automatically* every 5 minutes.
 ;; But you can manually update TAGS by `M-x find-and-ctags-update-all-tags-force'.
 ;; If you want to manually update the TAGS, `M-x find-and-ctags-update-all-tags-force'.
 ;;
-;; After `'tags-table-list' is set, You can `M-x find-tag' to start code navigation
+;; After `tags-table-list' is set, You can `M-x find-tag' to start code navigation
 ;;
-;; You can use `(find-and-ctags-get-hostname)' for per computer setup.
-;; For example, if my home PC hostname is like `AU0247589',
+;; You can use `find-and-ctags-get-hostname' for per computer setup.
+;; For example, if my home PC hostname is like "AU0247589",
 ;; Here is sample code how I specify my C++ setup for home ONLY:
 ;;
 ;;   (if (string-match "^AU.*" (find-and-ctags-get-hostname))

@@ -1,4 +1,4 @@
-* find-and-ctags (v0.0.6)
+* find-and-ctags (v0.0.7)
 
 Create TAGS by combining [[http://www.gnu.org/software/findutils/][Find]] and [[http://ctags.sourceforge.net/ctags][Ctags]] on Windows/Linux/OSX.
 * Why
@@ -19,40 +19,35 @@ Here is sample setup for project named "MYPROJ":
 #+begin_src elisp
 (defun my-setup-develop-environment ()
   (interactive)
-  (let (proj-dir
-        find-opts
-        ctags-opts)
 
-    ;; for COOL MYPROJ
-    ;; you can use find-and-ctags-current-full-filename-match-pattern-p instead
-    (when (find-and-ctags-current-path-match-pattern-p "MYPROJ.*/app")
-      (setq proj-dir (if find-and-ctags-windows-p "c:/Workspaces/MYPROJ/MACWeb/WebContent/app"
-                       "~/projs/MYPROJ/MACWeb/WebContent/app"))
-      ;; ignore file bigger than 64K, ignore files in "dist/"
-      (setq find-opts "-not -size +64k  -not -iwholename '*/dist/*'")
-      (setq ctags-opts "--exclude=*.min.js --exclude=*.git*")
-      (setq-local tags-table-list
-                  (list (find-and-ctags-run-ctags-if-needed proj-dir '((find-opts ctags-opts)
-                                                                       ("dist/test.js" "-a"))))))
+  ;; you can use `find-and-ctags-current-full-filename-match-pattern-p' instead
+  (when (find-and-ctags-current-path-match-pattern-p "/MYPROJ")
+    (setq-local tags-table-list
+                (list (find-and-ctags-run-ctags-if-needed "~/workspace/MYPROJ" ; project directory
+                                                          '(("-not -size +64k" "--exclude=*.min.js") ; (find-opts ctags-opts)
+                                                            ;; you may add more find-opts ctags-opts pair HERE to run find&ctags again to APPEND to same TAGS file
+                                                            ;; ctags-opts must contain "-a" to append
+                                                            ;; (find-opts "-a")
+                                                            )))))
 
-    ;; for other projects
-    ;; insert NEW `when' statements here
-    ))
+  ;; for other projects
+  ;; insert NEW `when' statements here
+  )
+(add-hook 'prog-mode-hook 'my-setup-develop-environment) ; prog-mode require emacs24+
+(add-hook 'lua-mode-hook 'my-setup-develop-environment) ; lua-mode does NOT inherit from prog-mode
 
 ;; OPTIONAL
 (add-hook 'after-save-hook 'find-and-ctags-auto-update-tags)
-(add-hook 'prog-mode-hook 'my-setup-develop-environment) ; prog-mode require emacs24+
-(add-hook 'org-mode-hook 'my-setup-develop-environment)
 #+end_src
 
-"tags-table-list" is the global variable defined in Emacs. find-and-ctags will set up it for you.
+=tags-table-list= is the global variable defined in Emacs. find-and-ctags will set up it for you.
 
-After the "tags-table-list" is set, you can `M-x find-tag` to do code navigation. "find-tag" is the command bundled with Emacs.
+After the =tags-table-list= is set, you can =M-x find-tag= to do code navigation.
 
-In above setup, TAGS will be updated *automatically* every 5 minutes. But you can alway manually update the TAGS by `M-x find-and-ctags-update-all-tags-force`.
+In above setup, TAGS is updated *automatically* every 5 minutes. But you can alway manually update the TAGS by =M-x find-and-ctags-update-all-tags-force=.
 * Advanced Tips (OPTIONAL)
-** Filter files feeded into Ctags
-"find-and-ctags-run-ctags-if-needed" actually only execute the below command line in shell:
+** Filter files passed to Ctags
+=find-and-ctags-run-ctags-if-needed= actually only execute the below command line in shell:
 #+begin_src bash
 find . -type f -not -name 'TAGS' find-opts | ctags -e ctags-opts -L -
 #+end_src
@@ -63,8 +58,8 @@ For example, if you assign find-opts to " | grep 'test.*'", the actual command t
 #+begin_src bash
 find . -type f -not -name 'TAGS' | grep 'test.*' | ctags -e ctags-opts -L -
 #+end_src
-** Detect hostname of current computer
-Use API "(find-and-ctags-get-hostname)"
+** Detect hostname of computer
+Use API =find-and-ctags-get-hostname=
 
 #+begin_src elisp
 ;; I do Javascript/HTML/Java in office and C++ at home.
@@ -73,7 +68,9 @@ Use API "(find-and-ctags-get-hostname)"
   (setq my-default-ctags-options "--I IMPLEMENT_ABSTRACT_CLASS"))
 #+end_src
 ** Time interval to update TAGS
-It's defined in the global variable "find-and-ctags-auto-update-tags-interval". The unit of time is the second.
+#+begin_src elisp
+(setq find-and-ctags-auto-update-tags-interval 300) ; 300 seconds
+#+end_src
 ** Ctags setup
 Google "filetype:ctags site:github.com". Here is [[https://gist.github.com/redguardtoo/b12ddae3b80.0.476e9b#file-ctags][mine]].
 

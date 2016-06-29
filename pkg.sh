@@ -1,5 +1,5 @@
 #!/bin/bash
-pkg=find-and-ctags-0.0.6
+pkg=find-and-ctags-0.0.7
 mkdir $pkg
 cp README.org $pkg
 cp *.el $pkg
