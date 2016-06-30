@@ -72,7 +72,7 @@ Use API =find-and-ctags-get-hostname=
 (setq find-and-ctags-auto-update-tags-interval 300) ; 300 seconds
 #+end_src
 ** Ctags setup
-Google "filetype:ctags site:github.com". Here is [[https://gist.github.com/redguardtoo/b12ddae3b80.0.476e9b#file-ctags][mine]].
+Google "filetype:ctags site:github.com". Here is [[https://gist.github.com/redguardtoo/b12ddae3b8010a276e9b][mine]].
 
 You may need configure environment variable "HOME" on Windows because ctags looks for "%HOME%/.ctags" by default.
 * Bug Report
