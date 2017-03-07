@@ -150,26 +150,37 @@ If FORCE is t, the commmand is executed without consulting the timer."
             (shell-command cmd))))
     file))
 
+(defun find-and-ctags-buffer-dir ()
+  "Find a directory for current buffer.
+Could be parent of `buffer-file-name' or `default-directory' or anything.
+Make sure it's not nil."
+  (or (if buffer-file-name (file-name-directory buffer-file-name))
+      ;; buffer is created in real time
+      default-directory
+      ""))
+
+;;;###autoload
+(defun find-and-ctags-buffer-path ()
+  "Find a path for current buffer.
+Could be `buffer-file-name' or `default-directory' or anything.
+Make sure it's not nil."
+  (or buffer-file-name
+      default-directory
+      ""))
+
 ;;;###autoload
 (defun find-and-ctags-current-path-match-pattern-p (regex)
   "Is current directory match the REGEX?
 We use parent directory of `buffer-file-name'.
 If it's nil, fallback to `default-directory'."
-  (let ((dir (or (if buffer-file-name (file-name-directory buffer-file-name))
-                 ;; buffer is created in real time
-                 default-directory
-                 "")))
-    (string-match-p regex dir)))
+  (string-match-p regex (find-and-ctags-buffer-dir)))
 
 ;;;###autoload
 (defun find-and-ctags-current-full-filename-match-pattern-p (regex)
   "Is buffer match the REGEX?
 We use `buffer-file-name' at first.
 If it's nil, fallback to `default-directory'."
-  (let ((dir (or buffer-file-name
-                 default-directory
-                 "")))
-    (string-match-p regex dir)))
+  (string-match-p regex (find-and-ctags-buffer-path)))
 
 ;;;###autoload
 (defun find-and-ctags-update-all-tags-force (&optional is-used-as-api)
