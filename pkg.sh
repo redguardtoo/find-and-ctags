@@ -1,6 +1,6 @@
 #!/bin/bash
 name=find-and-ctags
-version=0.0.7
+version=0.0.8
 pkg=$name-$version
 mkdir $pkg
 cp *.el $pkg

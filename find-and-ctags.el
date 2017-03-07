@@ -1,11 +1,11 @@
 ;;; find-and-ctags.el --- Use ctags&find to create TAGS on Winows/Linux/OSX
 
-;; Copyright (C) 2014-2016 Chen Bin
+;; Copyright (C) 2014-2017 Chen Bin
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/find-and-ctags
 ;; Keywords: find ctags
-;; Version: 0.0.7
+;; Version: 0.0.8
 
 ;; This file is not part of GNU Emacs.
 
@@ -152,16 +152,23 @@ If FORCE is t, the commmand is executed without consulting the timer."
 
 ;;;###autoload
 (defun find-and-ctags-current-path-match-pattern-p (regex)
-  "Is current directory match the REGEX?"
-  (let ((dir (if (buffer-file-name)
-                 (file-name-directory (buffer-file-name))
-               "")))
+  "Is current directory match the REGEX?
+We use parent directory of `buffer-file-name'.
+If it's nil, fallback to `default-directory'."
+  (let ((dir (or (if buffer-file-name (file-name-directory buffer-file-name))
+                 ;; buffer is created in real time
+                 default-directory
+                 "")))
     (string-match-p regex dir)))
 
 ;;;###autoload
 (defun find-and-ctags-current-full-filename-match-pattern-p (regex)
-  "Is current full file name (including directory) match the REGEX?"
-  (let ((dir (if (buffer-file-name) (buffer-file-name) "")))
+  "Is buffer match the REGEX?
+We use `buffer-file-name' at first.
+If it's nil, fallback to `default-directory'."
+  (let ((dir (or buffer-file-name
+                 default-directory
+                 "")))
     (string-match-p regex dir)))
 
 ;;;###autoload
