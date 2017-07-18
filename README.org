@@ -20,15 +20,14 @@ Here is sample setup for project named "MYPROJ":
 (defun my-setup-develop-environment ()
   (interactive)
 
-  ;; you can use `find-and-ctags-current-full-filename-match-pattern-p' instead
   (when (find-and-ctags-current-path-match-pattern-p "/MYPROJ")
     (setq-local tags-table-list
-                (list (find-and-ctags-run-ctags-if-needed "~/workspace/MYPROJ" ; project directory
-                                                          '(("-not -size +64k" "--exclude=*.min.js") ; (find-opts ctags-opts)
-                                                            ;; you may add more find-opts ctags-opts pair HERE to run find&ctags again to APPEND to same TAGS file
-                                                            ;; ctags-opts must contain "-a" to append
-                                                            ;; (find-opts "-a")
-                                                            )))))
+                (list (find-and-ctags-generate-tags "~/workspace/MYPROJ" ; project directory
+                                                    '(("-not -size +64k" "--exclude=*.min.js") ; (find-opts ctags-opts)
+                                                      ;; you may add more find-opts ctags-opts pair HERE to run find&ctags again to APPEND to same TAGS file
+                                                      ;; ctags-opts must contain "-a" to append
+                                                      ;; (find-opts "-a")
+                                                      )))))
 
   ;; for other projects
   ;; insert NEW `when' statements here
@@ -40,7 +39,7 @@ Here is sample setup for project named "MYPROJ":
 (add-hook 'after-save-hook 'find-and-ctags-auto-update-tags)
 #+end_src
 
-=tags-table-list= is the global variable defined in Emacs. find-and-ctags will set up it for you.
+=tags-table-list= is the global variable defined in Emacs. find-and-ctags will set it for you.
 
 After the =tags-table-list= is set, you can =M-x find-tag= to do code navigation.
 
