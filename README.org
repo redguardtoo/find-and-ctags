@@ -1,5 +1,7 @@
 * find-and-ctags (v0.0.8)
 
+This project is obsolete. You could consider using [[https://github.com/redguardtoo/counsel-etags][counsel-etags]] instead. =counsel-etags= is more powerful and easier to setup.
+
 Create TAGS by combining [[http://www.gnu.org/software/findutils/][Find]] and [[http://ctags.sourceforge.net/ctags][Ctags]] on Windows/Linux/OSX.
 * Why
 - Enough tools provided. You can set up any project in 1 minute
